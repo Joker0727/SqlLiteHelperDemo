@@ -37,7 +37,7 @@ namespace SqlLiteHelperDemo
         #endregion
 
         #region 数据操作系列
-        //写入,更新,删除数据库操作
+
         #region ExeSql      仅执行Insert与Update语句,返回影响条数
         /// <summary>
         /// 仅执行Insert与Update语句,返回影响条数
@@ -75,9 +75,7 @@ namespace SqlLiteHelperDemo
                 MyConn.Close();
             }
         }
-        #endregion
-
-        #region ExeSql      仅执行Insert与Update语句,返回影响条数
+    
         /// <summary>
         /// 仅执行Insert与Update语句,返回影响条数
         /// </summary>
@@ -119,9 +117,7 @@ namespace SqlLiteHelperDemo
                 MyConn.Close();
             }
         }
-        #endregion
 
-        #region ExeSql      仅执行Insert与Update语句,返回影响条数
         /// <summary>
         /// 仅执行Insert与Update语句,返回影响条数
         /// </summary>
@@ -156,9 +152,7 @@ namespace SqlLiteHelperDemo
                 MyConn.Close();
             }
         }
-        #endregion
 
-        #region ExeSqlOut   仅执行Insert,返回刚插入的ID与影响条数
         /// <summary>
         /// 仅执行Insert与Update语句,返回刚插入的ID与影响条数
         /// </summary>
@@ -191,9 +185,7 @@ namespace SqlLiteHelperDemo
                 MyConn.Close();
             }
         }
-        #endregion
 
-        #region ExeSqlOut   仅执行Insert,返回刚插入的ID与影响条数
         /// <summary>
         /// 仅执行Insert,返回刚插入的ID与影响条数
         /// </summary>
@@ -228,6 +220,66 @@ namespace SqlLiteHelperDemo
                 Comm.Dispose();
                 MyConn.Close();
             }
+        }
+        #endregion
+
+        #region SearchSql       //获取数据  查询语句，返回DataTable
+        /// <summary>
+        /// 通过执行SQL语句，获取表中数据。
+        /// </summary>
+        /// <param name="sError">错误信息</param>
+        /// <param name="sSQL">执行的SQL语句</param>
+        public DataTable SearchSql(string sql)
+        {
+            if (MyConn.State != ConnectionState.Open) MyConn.Open();
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, MyConn))
+                {
+                    using (SQLiteDataAdapter dao = new SQLiteDataAdapter(cmd))
+                    {
+                        dao.Fill(dt);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                MyConn.Close();
+            }
+            return dt;
+        }
+        #endregion
+
+        #region RunSql       执行 insert,update,delete
+        /// <summary>
+        /// 通过执行SQL语句，执行insert,update,delete 动作
+        /// </summary>
+        /// <param name="sError">错误信息</param>
+        /// <param name="sSQL">执行的SQL语句</param>
+        /// <param name="bUseTransaction">是否使用事务</param>             
+        public bool RunSql(string sql)
+        {
+            bool iResult = false;
+            if (MyConn.State != ConnectionState.Open) MyConn.Open();
+            try
+            {
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, MyConn))
+                {
+                    iResult = cmd.ExecuteNonQuery() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                MyConn.Close();
+            }
+            return iResult;
         }
         #endregion
 
